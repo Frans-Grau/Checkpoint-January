@@ -12,12 +12,6 @@ wines = pd.read_csv(link)
 ### Link
 dash.register_page(__name__,path='/', name = 'Wine Analysis') #slash is homepage
 
-### Dropdown menus
-
-dropdown_country = list(map(lambda ctr: str(ctr), wines['country'].unique()))
-dropdown_province = list(map(lambda provin: str(provin), wines['province'].unique()))
-dropdown_variety = list(map(lambda vrty: str(vrty), wines['variety'].unique()))
-
 ###Static figures 
 winexcountry = wines.groupby('country')['title'].count().sort_values(ascending=False)
 fig1 = px.histogram(winexcountry, x=winexcountry.index, y=winexcountry.values,nbins=50,title="Largest wine producers",labels=dict(x="Country", y="wines"))

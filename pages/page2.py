@@ -15,6 +15,7 @@ dash.register_page(__name__, name = 'Country Overview')
 
 ### Dropdown menus
 dropdown_country = list(map(lambda ctr: str(ctr), wines['country'].unique()))
+dropdown_country.sort()
 dropdown_province = list(map(lambda provin: str(provin), wines['province'].unique()))
 dropdown_variety = list(map(lambda vrty: str(vrty), wines['variety'].unique()))
 
@@ -36,7 +37,11 @@ layout = html.Div(
                         placeholder= 'Select a country',
                         options= dropdown_country))),
         html.Br(),
-        # dbc.Row(html.Div(html.H3(["Region Overview"]))),
+        dbc.Row([
+                dbc.Col(html.Div(html.H5(["Wines in Stock"]))),
+                dbc.Col(html.Div(html.H5([f"Top 10 Wines"]))),
+    ]),
+    
             dbc.Row(
     [
     dbc.Col(html.Div(
@@ -85,7 +90,9 @@ layout = html.Div(
 def update_countryx(selected_country):
     wines['year'] = wines['title'].str.extract(r'\b(1[8-9][0-9][0-9]|20[0-2][0-9])\b').astype(float)
     forline = wines[wines['country']==selected_country].groupby('year')['title'].count()
-    figc1 = px.line(forline, x=forline.index, y=forline.values, title='Wines in Stock')
+    figc1 = px.line(forline, x=forline.index, y=forline.values,labels=dict(x="", y="production (#bottles)"))
+    figc1.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
+                  plot_bgcolor = "rgba(0,0,0,0)")
     return figc1
 @callback(
     Output('update-table', 'children'),
@@ -95,7 +102,8 @@ def update_table(selected_country):
     countrytable = wines[wines['country']==selected_country][['title','province','points','price']].sort_values('points',ascending=False)[:10]
     return html.Div(
         [
-            html.H5(f"Top 10 Wines in {selected_country}"),
+            # html.H5(f"Top 10 Wines in {selected_country}"),
+            # html.Br(),
             dash_table.DataTable(
                 data=countrytable.to_dict("rows"),
                 columns=[{"id": x, "name": x} for x in countrytable.columns],

@@ -28,7 +28,7 @@ sidebar = html.Div(
         dbc.Nav(
             [
                 dbc.NavLink("Industry Overview", href="/", active="exact"),
-                dbc.NavLink("Domain des Croix", href="/page2", active="exact"),
+                dbc.NavLink("Country Overview", href="/page2", active="exact"),
                 dbc.NavLink("Price Prediction", href="/page3", active="exact"),
             ],
             vertical=True,
