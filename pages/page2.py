@@ -35,26 +35,30 @@ layout = html.Div(
                         placeholder= 'Select a country',
                         options= dropdown_country))),
         html.Br(),
-        dbc.Row(
+        dbc.Row(html.Div(html.H3(["Region Overview"]))),
+            dbc.Row(
     [
-    dbc.Row(html.Div(
-    dcc.Graph(id='pie1',
-              figure= fig1
-              ))
+    dbc.Col(html.Div(
+    dcc.Graph(id='figC1',
+              )),md=6,
+    ),
+    dbc.Col(html.Div(
+    dcc.Graph(id='figC1',
+              )),md=6,
     ),
     ],
         ),
             html.Br(),
-            dbc.Row(html.Div(html.H3(["Country Overview"]))),
+            dbc.Row(html.Div(html.H3(["Region Overview"]))),
             dbc.Row(
     [
     dbc.Col(html.Div(
     dcc.Graph(id='fig2',
-              ))
+              )),md=6,
     ),
     dbc.Col(html.Div(
     dcc.Graph(id='fig3',
-              ))
+              )),md=6,
     ),
     ],
         ),
@@ -62,11 +66,11 @@ layout = html.Div(
     [
     dbc.Col(html.Div(
     dcc.Graph(id='fig4',
-              ))
+              )),md=6,
     ),
     dbc.Col(html.Div(
     dcc.Graph(id='fig5',
-              ))
+              )),md=6,
     ),
     ],
         ),
@@ -76,14 +80,20 @@ layout = html.Div(
 
 ### Callbacks
 @callback(
+        
+)
+
+
+@callback(
     Output('fig2','figure'),
     Input('country','value')
 )
 def update_region(selected_country):
     wine_c = wines[wines['country']==selected_country]
-    grapescore = wine_c.groupby('variety')['points'].mean().sort_values(ascending=False)
-    fig2 = px.histogram(grapescore[:5], x=grapescore.index[:5], y=grapescore.values[:5])
-    fig2.update_layout(title="Best Rated Grape Variety")
+    grapescore = wine_c.groupby('province')['points'].mean().sort_values(ascending=False)
+    fig2 = px.histogram(grapescore[:5], x=grapescore.index[:5], y=grapescore.values[:5],color_discrete_sequence =['green']*5,labels=dict(x="", y="Points"))
+    fig2.update_layout(title="Best Rated Regions",paper_bgcolor = "rgba(0,0,0,0)",
+                  plot_bgcolor = "rgba(0,0,0,0)")
     return fig2
 @callback(
     Output('fig3','figure'),
@@ -91,9 +101,10 @@ def update_region(selected_country):
 )
 def update_region2(selected_country):
     wine_c = wines[wines['country']==selected_country]
-    grapescore = wine_c.groupby('variety')['points'].mean().sort_values(ascending=True)
-    fig3 = px.histogram(grapescore[:5], x=grapescore.index[:5], y=grapescore.values[:5])
-    fig3.update_layout(title="Worst Rated Grape Variety")
+    grapescore = wine_c.groupby('province')['points'].mean().sort_values(ascending=True)
+    fig3 = px.histogram(grapescore[:5], x=grapescore.index[:5], y=grapescore.values[:5],color_discrete_sequence =['red']*5,labels=dict(x="", y="Points"))
+    fig3.update_layout(title="Worst Rated Regions",paper_bgcolor = "rgba(0,0,0,0)",
+                  plot_bgcolor = "rgba(0,0,0,0)")
     return fig3
 @callback(
     Output('fig4','figure'),
@@ -107,7 +118,8 @@ def update_region3(selected_country):
     other["province"] = "Other"
     pxccounts = top_4.append(other, ignore_index=True)
     fig4 = px.pie(pxccounts, values="country", names="province",hole=.5)
-    fig4.update_layout(title="Region Analysis")
+    fig4.update_layout(title="Largest Producers",paper_bgcolor = "rgba(0,0,0,0)",
+                  plot_bgcolor = "rgba(0,0,0,0)")
     return fig4
 @callback(
     Output('fig5','figure'),
@@ -121,5 +133,6 @@ def update_region3(selected_country):
     other["variety"] = "Other"
     vxccounts = top_5.append(other, ignore_index=True)
     fig5 = px.pie(vxccounts, values="country", names="variety",hole=.5)
-    fig5.update_layout(title="Region Analysis")
+    fig5.update_layout(title="Most Common Grape Variety",paper_bgcolor = "rgba(0,0,0,0)",
+                  plot_bgcolor = "rgba(0,0,0,0)")
     return fig5

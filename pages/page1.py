@@ -10,7 +10,7 @@ link = "https://github.com/murpi/wilddata/raw/master/wine.zip"
 wines = pd.read_csv(link)
 
 ### Link
-dash.register_page(__name__,path='/', name = 'Airport Analysis') #slash is homepage
+dash.register_page(__name__,path='/', name = 'Wine Analysis') #slash is homepage
 
 ### Dropdown menus
 
