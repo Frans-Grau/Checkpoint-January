@@ -38,7 +38,7 @@ layout = html.Div(
                         options= dropdown_country))),
         html.Br(),
         dbc.Row([
-                dbc.Col(html.Div(html.H5(["Wines in Stock"]))),
+                dbc.Col(html.Div(html.H5(["Wine production"]))),
                 dbc.Col(html.Div(html.H5([f"Top 10 Wines"]))),
     ]),
     

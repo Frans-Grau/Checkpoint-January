@@ -14,7 +14,7 @@ dash.register_page(__name__,path='/', name = 'Wine Analysis') #slash is homepage
 
 ###Static figures 
 winexcountry = wines.groupby('country')['title'].count().sort_values(ascending=False)
-fig1 = px.histogram(winexcountry, x=winexcountry.index, y=winexcountry.values,nbins=50,title="Largest wine producers",labels=dict(x="Country", y="wines"))
+fig1 = px.histogram(winexcountry, x=winexcountry.index, y=winexcountry.values,nbins=50,labels=dict(x="Country", y="wines"))
 fig1.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
                   plot_bgcolor = "rgba(0,0,0,0)")
 
@@ -50,6 +50,9 @@ layout = html.Div(
     [
         dbc.Row(dbc.Col(html.Div(html.H3(["Industry Overview"])))),
         html.Br(),
+        dbc.Row([
+        dbc.Col(html.Div(html.H5(["Porduction per Country"]))),
+    ]),
         dbc.Row(
     [
     dbc.Row(html.Div(
@@ -60,6 +63,7 @@ layout = html.Div(
     ],
         ),
             html.Br(),
+            dbc.Row(html.Div(html.H3(["Region Overview"]))),
             dbc.Row(
     [
     dbc.Col(html.Div(
