@@ -36,14 +36,14 @@ layout = html.Div(
                         placeholder= 'Select a country',
                         options= dropdown_country))),
         html.Br(),
-        dbc.Row(html.Div(html.H3(["Region Overview"]))),
+        # dbc.Row(html.Div(html.H3(["Region Overview"]))),
             dbc.Row(
     [
     dbc.Col(html.Div(
     dcc.Graph(id='figC1',
-              )),md=4,
+              )),md=6,
     ),
-    dbc.Col(html.Div(id="update-table"),md=8,
+    dbc.Col(html.Div(id="update-table"),md=6,
     )
     ],
         ),
@@ -95,9 +95,11 @@ def update_table(selected_country):
     countrytable = wines[wines['country']==selected_country][['title','province','points','price']].sort_values('points',ascending=False)[:10]
     return html.Div(
         [
+            html.H5(f"Top 10 Wines in {selected_country}"),
             dash_table.DataTable(
                 data=countrytable.to_dict("rows"),
                 columns=[{"id": x, "name": x} for x in countrytable.columns],
+                style_cell={'textAlign': 'center'},
             )
         ]
     )
