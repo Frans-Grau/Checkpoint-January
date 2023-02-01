@@ -43,10 +43,8 @@ layout = html.Div(
     dcc.Graph(id='figC1',
               )),md=4,
     ),
-    dbc.Col(html.Div(
-    dcc.Graph(id='figC2',
-              )),md=8,
-    ),
+    dbc.Col(html.Div(id="update-table"),md=8,
+    )
     ],
         ),
             html.Br(),
@@ -90,20 +88,19 @@ def update_countryx(selected_country):
     figc1 = px.line(forline, x=forline.index, y=forline.values, title='Wines in Stock')
     return figc1
 @callback(
-    Output('figC2', 'dash_table'),
+    Output('update-table', 'children'),
     [Input('country', 'value')]
 )
 def update_table(selected_country):
-    countrytable = wines[wines['country']==selected_country][['title','province','points','price']].sort_values('points',ascending=False)[:5]
-    return dash_table.DataTable(
-        data=countrytable.to_dict(),
-        columns=[countrytable.columns]
+    countrytable = wines[wines['country']==selected_country][['title','province','points','price']].sort_values('points',ascending=False)[:10]
+    return html.Div(
+        [
+            dash_table.DataTable(
+                data=countrytable.to_dict("rows"),
+                columns=[{"id": x, "name": x} for x in countrytable.columns],
+            )
+        ]
     )
-
-
-# #return dash_table.DataTable(
-#         countrytable.to_dict('records'),
-#         columns=[{'title': c, 'province': c,'price':c, 'points': c} for c in countrytable.columns])
 
 @callback(
     Output('fig2','figure'),
