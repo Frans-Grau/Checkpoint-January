@@ -22,13 +22,31 @@ winexcountry = wines.groupby('country')['title'].count().sort_values(ascending=F
 fig1 = px.histogram(winexcountry, x=winexcountry.index, y=winexcountry.values,nbins=50)
 
 ###Layout
+###Static figures 
+winexcountry = wines.groupby('country')['title'].count().sort_values(ascending=False)
+fig1 = px.histogram(winexcountry, x=winexcountry.index, y=winexcountry.values,nbins=50)
+
+###Layout
 layout = html.Div(
     [
         dbc.Row(dbc.Col(html.Div(html.H3(["Industry Overview"])))),
+        dbc.Row(dbc.Col(dcc.Dropdown(
+                        id= 'country',
+                        placeholder= 'Select a country',
+                        options= dropdown_country))),
         html.Br(),
-        html.Br(),
-        dbc.Row(html.Div(html.H3(["Country Overview"]))),
         dbc.Row(
+    [
+    dbc.Row(html.Div(
+    dcc.Graph(id='pie1',
+              figure= fig1
+              ))
+    ),
+    ],
+        ),
+            html.Br(),
+            dbc.Row(html.Div(html.H3(["Country Overview"]))),
+            dbc.Row(
     [
     dbc.Col(html.Div(
     dcc.Graph(id='fig2',
