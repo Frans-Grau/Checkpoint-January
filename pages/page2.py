@@ -10,7 +10,7 @@ link = "https://github.com/murpi/wilddata/raw/master/wine.zip"
 wines = pd.read_csv(link)
 
 ### Link
-dash.register_page(__name__, name = 'Domain des Croix') #slash is homepage
+dash.register_page(__name__, name = 'Country Overview') 
 
 ### Dropdown menus
 dropdown_country = list(map(lambda ctr: str(ctr), wines['country'].unique()))
@@ -29,7 +29,7 @@ fig1 = px.histogram(winexcountry, x=winexcountry.index, y=winexcountry.values,nb
 ###Layout
 layout = html.Div(
     [
-        dbc.Row(dbc.Col(html.Div(html.H3(["Industry Overview"])))),
+        dbc.Row(dbc.Col(html.Div(html.H3(["Country Overview"])))),
         dbc.Row(dbc.Col(dcc.Dropdown(
                         id= 'country',
                         placeholder= 'Select a country',
@@ -40,11 +40,11 @@ layout = html.Div(
     [
     dbc.Col(html.Div(
     dcc.Graph(id='figC1',
-              )),md=6,
+              )),md=4,
     ),
     dbc.Col(html.Div(
-    dcc.Graph(id='figC1',
-              )),md=6,
+    dcc.Graph(id='figC2',
+              )),md=8,
     ),
     ],
         ),
@@ -80,8 +80,14 @@ layout = html.Div(
 
 ### Callbacks
 @callback(
-        
+        Output('figC1','figure'),
+        Input('country','value')
 )
+def update_countryx(selected_country):
+    wines['year'] = wines['title'].str.extract(r'\b(1[8-9][0-9][0-9]|20[0-2][0-9])\b').astype(float)
+    forline = wines[wines['country']==selected_country].groupby('year')['title'].count()
+    figc1 = px.line(forline, x=forline.index, y=forline.values, title='Wines in Stock')
+    return figc1
 
 
 @callback(
