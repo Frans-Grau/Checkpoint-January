@@ -1,6 +1,7 @@
 ### Imports
 import dash
 import dash_bootstrap_components as dbc
+from dash import dash_table
 from dash import Input, Output, dcc, html, callback
 import pandas as pd
 import plotly.express as px
@@ -88,7 +89,21 @@ def update_countryx(selected_country):
     forline = wines[wines['country']==selected_country].groupby('year')['title'].count()
     figc1 = px.line(forline, x=forline.index, y=forline.values, title='Wines in Stock')
     return figc1
+@callback(
+    Output('figC2', 'dash_table'),
+    [Input('country', 'value')]
+)
+def update_table(selected_country):
+    countrytable = wines[wines['country']==selected_country][['title','province','points','price']].sort_values('points',ascending=False)[:5]
+    return dash_table.DataTable(
+        data=countrytable.to_dict(),
+        columns=[countrytable.columns]
+    )
 
+
+# #return dash_table.DataTable(
+#         countrytable.to_dict('records'),
+#         columns=[{'title': c, 'province': c,'price':c, 'points': c} for c in countrytable.columns])
 
 @callback(
     Output('fig2','figure'),
