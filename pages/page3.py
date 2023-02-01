@@ -5,10 +5,10 @@ import pandas as pd
 import plotly.express as px
 
 ### Link
-dash.register_page(__name__,name = 'Airport Analysis') #slash is homepage
+dash.register_page(__name__,name = 'Price Prediction') #slash is homepage
 
 layout = html.Div(
     [
-        dbc.Row(dbc.Col(html.Div(html.H3(["Airports"])))),
+        dbc.Row(dbc.Col(html.Div(html.H3(["Price Prediction"])))),
     ]
 )
