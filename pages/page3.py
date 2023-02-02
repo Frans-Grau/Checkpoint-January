@@ -13,11 +13,20 @@ wine['price'] = wine['price'].round(2)
 wine = wine[wine['price']>0]
 
 ### Static Graphs
-### Average price categories
-pricecategory = wine.groupby('variety')['price'].mean().sort_values(ascending=False)
-fig311 = px.bar(pricecategory, x=pricecategory.index, y=pricecategory.values,labels=dict(x="Country", y="Average Price"))
+### Average price for the largest varieties
+varietytop10 = wine['variety'].value_counts()[:5].index.tolist()
+data = wine[wine['variety'].isin(varietytop10)]
+fig311 = px.violin(data, x='variety', y='price',labels=dict(x="Country", y="Average Price"))
 fig311.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
                   plot_bgcolor = "rgba(0,0,0,0)")
+
+### Average price for the largest varieties
+expensive = wine.groupby('province')['price'].mean().sort_values(ascending=False)[:5].index.tolist()
+data = wine[wine['province'].isin(expensive)]
+fig322 = px.violin(data, x='province', y='price',labels=dict(x="Country", y="Average Price"))
+fig322.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
+                  plot_bgcolor = "rgba(0,0,0,0)")
+
 
 ### Static table
 domaincroix = wine[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
@@ -27,12 +36,12 @@ layout = html.Div(
     [
         dbc.Row(dbc.Col(html.Div(html.H3(["Price Overview"])))),
         dbc.Row([
-                dbc.Col(html.Div(html.H5(["High-end Categories"]))),
-                dbc.Col(html.Div(html.H5(["Most Expensive Regions"]))),
+                dbc.Col(html.Div(html.H5(["Largest wine categories price distribution"]))),
+                dbc.Col(html.Div(html.H5(["Price distribution in expensive regions"]))),
                 ]),
         dbc.Row([
                 dbc.Col(html.Div(dcc.Graph(id='fig31', figure= fig311)),md=6,),
-                dbc.Col(html.Div(dcc.Graph(id='fig32',)),md=6,),
+                dbc.Col(html.Div(dcc.Graph(id='fig32', figure= fig322)),md=6,),
                 ]),
         dbc.Row([
                 dbc.Col(html.Div(html.H5(["Domain des Croix Price Prediction"]))),
