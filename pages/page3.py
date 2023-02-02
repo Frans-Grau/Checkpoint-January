@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 
 ### Link
-dash.register_page(__name__,name = 'Price Prediction') #slash is homepage
+dash.register_page(__name__,name = 'Price Prediction')
 
 layout = html.Div(
     [
