@@ -33,15 +33,15 @@ wine = wine[wine['price']>0]
 varietytop10 = wine['variety'].value_counts()[:5].index.tolist()
 data = wine[wine['variety'].isin(varietytop10)]
 fig311 = px.violin(data, x='variety', y='price',labels=dict(x="Country", y="Average Price"))
-fig311.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
-                  plot_bgcolor = "rgba(0,0,0,0)")
+# fig311.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
+                #   plot_bgcolor = "rgba(0,0,0,0)")
 
 ### Average price for the largest varieties
 expensive = wine.groupby('province')['price'].mean().sort_values(ascending=False)[:5].index.tolist()
 data = wine[wine['province'].isin(expensive)]
 fig322 = px.violin(data, x='province', y='price',color_discrete_sequence =['green']*5,labels=dict(x="Country", y="Average Price"))
-fig322.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
-                  plot_bgcolor = "rgba(0,0,0,0)")
+# fig322.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
+#                   plot_bgcolor = "rgba(0,0,0,0)")
 
 
 ### Static table

@@ -7,9 +7,9 @@ import pandas as pd
 import plotly.express as px
 
 ### Load the dataset
-# link = "https://github.com/murpi/wilddata/raw/master/wine.zip"
-# wines = pd.read_csv(link)
-wines = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/wines_with_price.csv')
+link = "https://github.com/murpi/wilddata/raw/master/wine.zip"
+wines = pd.read_csv(link)
+# wines = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/wines_with_price.csv')
 wines['price'] = wines['price'].round(2)
 wines = wines[wines['price']>0]
 ### Link
@@ -131,9 +131,9 @@ def update_region(selected_country):
 )
 def update_region2(selected_country):
     wine_c = wines[wines['country']==selected_country]
-    grapescore = wine_c.groupby('province')['points'].mean().sort_values(ascending=True)
+    grapescore = wine_c.groupby('variety')['points'].mean().sort_values(ascending=True)
     fig3 = px.histogram(grapescore[:5], x=grapescore.index[:5], y=grapescore.values[:5],color_discrete_sequence =['red']*5,labels=dict(x="", y="Points"))
-    fig3.update_layout(title="Worst Rated Regions",paper_bgcolor = "rgba(0,0,0,0)",
+    fig3.update_layout(title="Worst Rated Varieties",paper_bgcolor = "rgba(0,0,0,0)",
                   plot_bgcolor = "rgba(0,0,0,0)")
     return fig3
 @callback(
@@ -148,7 +148,7 @@ def update_region3(selected_country):
     other["province"] = "Other"
     pxccounts = top_4.append(other, ignore_index=True)
     fig4 = px.pie(pxccounts, values="country", names="province",hole=.5)
-    fig4.update_layout(title="Largest Producers",paper_bgcolor = "rgba(0,0,0,0)",
+    fig4.update_layout(title="Largest Regions (producers)",paper_bgcolor = "rgba(0,0,0,0)",
                   plot_bgcolor = "rgba(0,0,0,0)")
     return fig4
 @callback(
