@@ -7,9 +7,11 @@ import pandas as pd
 import plotly.express as px
 
 ### Load the dataset
-link = "https://github.com/murpi/wilddata/raw/master/wine.zip"
-wines = pd.read_csv(link)
-
+# link = "https://github.com/murpi/wilddata/raw/master/wine.zip"
+# wines = pd.read_csv(link)
+wines = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/wines_with_price.csv')
+wines['price'] = wines['price'].round(2)
+wines = wines[wines['price']>0]
 ### Link
 dash.register_page(__name__, name = 'Country Overview') 
 
