@@ -16,6 +16,9 @@ import plotly
 import plotly.graph_objs as go
 from plotly.offline import plot
 import random
+from wordcloud import WordCloud
+import base64
+from io import BytesIO
 
 ### Link
 dash.register_page(__name__,name = 'Price Prediction')
@@ -36,7 +39,7 @@ fig311.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
 ### Average price for the largest varieties
 expensive = wine.groupby('province')['price'].mean().sort_values(ascending=False)[:5].index.tolist()
 data = wine[wine['province'].isin(expensive)]
-fig322 = px.violin(data, x='province', y='price',labels=dict(x="Country", y="Average Price"))
+fig322 = px.violin(data, x='province', y='price',color_discrete_sequence =['green']*5,labels=dict(x="Country", y="Average Price"))
 fig322.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
                   plot_bgcolor = "rgba(0,0,0,0)")
 
@@ -73,10 +76,12 @@ layout = html.Div(
                                                 ),
                                 ]),
                 ]),
+        html.Br(),
         dbc.Row([
                 dbc.Col(html.Div(html.H5(["Country's wine Description"]))),
                 dbc.Col(html.Div(html.H5(["Varietys of wine Description"]))),
                 ]),
+
         dbc.Row([dbc.Col(dcc.Dropdown(
                         id= 'country',
                         placeholder= 'Select a country',
@@ -94,7 +99,7 @@ layout = html.Div(
 )
 
 ### Callbacks
-callback(
+@callback(
     Output('fig35','figure'),
     Input('country','value')
 )
@@ -113,7 +118,7 @@ def generate_country(selectcountry):
     sentence = [w for w in words if not w in stop_words]
     colors = [plotly.colors.DEFAULT_PLOTLY_COLORS[random.randrange(1, 10)] for i in range(25)]
     weights = [random.randint(15, 35) for i in range(30)]
-    data = go.Scatter(x=[random.random() for i in range(20)],
+    data = go.Scatter(x=[random.random() for i in range(25)],
                  y=[random.random() for i in range(25)],
                  mode='text',
                  text=sentence,
@@ -125,26 +130,26 @@ def generate_country(selectcountry):
     fig35 = go.Figure(data=[data], layout=layout)
     return fig35
 
-callback(
+@callback(
     Output('fig36','figure'),
     Input('variety','value')
 )
 def generate_variety(selectvariety):
-    description_country = str(wine[wine['variety']==selectvariety]['description'])
-    description_country = re.sub(r"\d+","",description_country)
+    description_variety = str(wine[wine['variety']==selectvariety]['description'])
+    description_variety = re.sub(r"\d+","",description_variety)
     tokenizer = nltk.RegexpTokenizer(r"\w+")
-    nopunc = tokenizer.tokenize(description_country)
+    nopunc = tokenizer.tokenize(description_variety)
     country_words=" ".join(nopunc)
     country_words= nltk.word_tokenize(country_words.lower())
-    nums = re.findall("[0-9]+",description_country)
+    nums = re.findall("[0-9]+",description_variety)
     stop_words = set(stopwords.words('english'))
     stop_words |= set(nums) #add the list with all the numbers in the string to the list of stopwords
-    stop_words.update({'like','much','is','in', 'with',selectvariety.lower()})
+    stop_words.update({'like','much','is','in','slowly','erath','br','with',selectvariety.lower()})
     words = country_words
     sentence = [w for w in words if not w in stop_words]
     colors = [plotly.colors.DEFAULT_PLOTLY_COLORS[random.randrange(1, 10)] for i in range(25)]
     weights = [random.randint(15, 35) for i in range(30)]
-    data = go.Scatter(x=[random.random() for i in range(20)],
+    data = go.Scatter(x=[random.random() for i in range(25)],
                  y=[random.random() for i in range(25)],
                  mode='text',
                  text=sentence,
