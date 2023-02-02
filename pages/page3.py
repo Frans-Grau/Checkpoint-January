@@ -1,6 +1,6 @@
 import dash
 import dash_bootstrap_components as dbc
-from dash import Input, Output, dcc, html, callback
+from dash import Input, Output, dcc, html, callback, dash_table
 import pandas as pd
 import plotly.express as px
 
@@ -9,6 +9,12 @@ dash.register_page(__name__,name = 'Price Prediction')
 
 ### Upload Dataset
 wine_p = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/wines_with_price.csv')
+domain = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/domains.csv')
+
+### Static table
+domaincroix = domain[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
+
+###Layout
 layout = html.Div(
     [
         dbc.Row(dbc.Col(html.Div(html.H3(["Price Overview"])))),
@@ -24,7 +30,12 @@ layout = html.Div(
                 dbc.Col(html.Div(html.H5(["Domain des Croix Price Prediction"]))),
                 ]),
         dbc.Row([
-                dbc.Col(html.Div(id="table-2"),md=12,),
+                html.Div([dash_table.DataTable(
+                                                data=domaincroix.to_dict("rows"),
+                                                columns=[{"id": x, "name": x} for x in domaincroix.columns],
+                                                style_cell={'textAlign': 'center'},
+                                                ),
+                                ]),
                 ]),
         dbc.Row([
                 dbc.Col(html.Div(html.H5(["Country's wine Description"]))),
@@ -36,3 +47,5 @@ layout = html.Div(
                 ]),
     ]
 )
+
+### Callbacks
