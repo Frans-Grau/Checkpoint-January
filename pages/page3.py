@@ -3,6 +3,18 @@ import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html, callback, dash_table
 import pandas as pd
 import plotly.express as px
+import numpy as np 
+import re
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
+import nltk
+import spacy
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.stem import SnowballStemmer
+from string import punctuation
+from wordcloud import WordCloud
 
 ### Link
 dash.register_page(__name__,name = 'Price Prediction')
@@ -31,6 +43,12 @@ fig322.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
 ### Static table
 domaincroix = wine[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
 
+### Dropdown menus
+selectcountry = list(map(lambda ctr: str(ctr), wine['country'].unique()))
+selectcountry.sort()
+selectvariety = list(map(lambda vtr: str(vtr), wine['variety'].unique()))
+selectvariety.sort()
+
 ###Layout
 layout = html.Div(
     [
@@ -58,6 +76,15 @@ layout = html.Div(
                 dbc.Col(html.Div(html.H5(["Country's wine Description"]))),
                 dbc.Col(html.Div(html.H5(["Varietys of wine Description"]))),
                 ]),
+        dbc.Row(dbc.Col(dcc.Dropdown(
+                        id= 'country',
+                        placeholder= 'Select a country',
+                        options= selectcountry)),
+                dbc.Col(dcc.Dropdown(
+                        id= 'variety',
+                        placeholder= 'Select a wine variety (grape)',
+                        options= selectvariety)),
+                ),
         dbc.Row([
                 dbc.Col(html.Div(dcc.Graph(id='fig35',)),md=6,),
                 dbc.Col(html.Div(dcc.Graph(id='fig36',)),md=6,),
@@ -66,3 +93,52 @@ layout = html.Div(
 )
 
 ### Callbacks
+callback(
+    Output('fig35','figure'),
+    Input('country','value')
+)
+def generate_country(selectcountry):
+    description_country = str(wine[wine['country']==selectcountry]['description'])
+    description_country = re.sub(r"\d+","",description_country)
+    tokenizer = nltk.RegexpTokenizer(r"\w+")
+    nopunc = tokenizer.tokenize(description_country)
+    country_words=" ".join(nopunc)
+    country_words= nltk.word_tokenize(country_words.lower())
+    nums = re.findall("[0-9]+",description_country)
+    stop_words = set(stopwords.words('english'))
+    stop_words |= set(nums) 
+    stop_words.update({'like','much', selectcountry.lower()})
+    words = country_words
+    sentence = [w for w in words if not w in stop_words]
+    wordcloud = WordCloud(width=400, height=400, max_words= 40,background_color='white', max_font_size=200, min_font_size=10)
+    freq = nltk.FreqDist(sentence)
+    wordcloud.generate_from_frequencies(freq)
+    plt.axis("off")
+    plt.margins(x=0, y=0)
+    fig = plt.imshow(wordcloud, interpolation="bilinear")
+    return fig
+
+callback(
+    Output('fig36','figure'),
+    Input('variety','value')
+)
+def generate_variety(selectvariety):
+    description_country = str(wine[wine['variety']==selectvariety]['description'])
+    description_country = re.sub(r"\d+","",description_country)
+    tokenizer = nltk.RegexpTokenizer(r"\w+")
+    nopunc = tokenizer.tokenize(description_country)
+    country_words=" ".join(nopunc)
+    country_words= nltk.word_tokenize(country_words.lower())
+    nums = re.findall("[0-9]+",description_country)
+    stop_words = set(stopwords.words('english'))
+    stop_words |= set(nums) 
+    stop_words.update({'like','much', selectcountry.lower()})
+    words = country_words
+    sentence = [w for w in words if not w in stop_words]
+    wordcloud = WordCloud(width=400, height=400, max_words= 40,background_color='white', max_font_size=200, min_font_size=10)
+    freq = nltk.FreqDist(sentence)
+    wordcloud.generate_from_frequencies(freq)
+    plt.axis("off")
+    plt.margins(x=0, y=0)
+    fig = plt.imshow(wordcloud, interpolation="bilinear")
+    return fig
