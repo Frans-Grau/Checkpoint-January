@@ -8,11 +8,19 @@ import plotly.express as px
 dash.register_page(__name__,name = 'Price Prediction')
 
 ### Upload Dataset
-wine_p = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/wines_with_price.csv')
-domain = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/domains.csv')
+wine = pd.read_csv('https://raw.githubusercontent.com/Frans-Grau/Checkpoint-January/main/ML-Output/wines_with_price.csv')
+wine['price'] = wine['price'].round(2)
+wine = wine[wine['price']>0]
+
+### Static Graphs
+### Average price categories
+pricecategory = wine.groupby('variety')['price'].mean().sort_values(ascending=False)
+fig311 = px.bar(pricecategory, x=pricecategory.index, y=pricecategory.values,labels=dict(x="Country", y="Average Price"))
+fig311.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
+                  plot_bgcolor = "rgba(0,0,0,0)")
 
 ### Static table
-domaincroix = domain[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
+domaincroix = wine[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
 
 ###Layout
 layout = html.Div(
@@ -23,7 +31,7 @@ layout = html.Div(
                 dbc.Col(html.Div(html.H5(["Most Expensive Regions"]))),
                 ]),
         dbc.Row([
-                dbc.Col(html.Div(dcc.Graph(id='fig31',)),md=6,),
+                dbc.Col(html.Div(dcc.Graph(id='fig31', figure= fig311)),md=6,),
                 dbc.Col(html.Div(dcc.Graph(id='fig32',)),md=6,),
                 ]),
         dbc.Row([
