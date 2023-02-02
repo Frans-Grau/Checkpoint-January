@@ -41,7 +41,7 @@ fig322.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
 
 
 ### Static table
-domaincroix = wine[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
+domainX = wine[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
 
 ### Dropdown menus
 selectcountry = list(map(lambda ctr: str(ctr), wine['country'].unique()))
@@ -66,8 +66,8 @@ layout = html.Div(
                 ]),
         dbc.Row([
                 html.Div([dash_table.DataTable(
-                                                data=domaincroix.to_dict("rows"),
-                                                columns=[{"id": x, "name": x} for x in domaincroix.columns],
+                                                data=domainX.to_dict("rows"),
+                                                columns=[{"id": x, "name": x} for x in domainX.columns],
                                                 style_cell={'textAlign': 'center'},
                                                 ),
                                 ]),
