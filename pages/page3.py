@@ -11,10 +11,11 @@ import matplotlib.ticker as mtick
 import nltk
 import spacy
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, sent_tokenize
-from nltk.stem import SnowballStemmer
-from string import punctuation
 from wordcloud import WordCloud
+import plotly
+import plotly.graph_objs as go
+from plotly.offline import plot
+import random
 
 ### Link
 dash.register_page(__name__,name = 'Price Prediction')
@@ -41,7 +42,7 @@ fig322.update_layout(paper_bgcolor = "rgba(0,0,0,0)",
 
 
 ### Static table
-domainX = wine[['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
+domainX = wine[wine['winery']=='Domaine des Croix'][['title','country','province','variety','year','points','price']].sort_values('points',ascending=False)
 
 ### Dropdown menus
 selectcountry = list(map(lambda ctr: str(ctr), wine['country'].unique()))
@@ -76,7 +77,7 @@ layout = html.Div(
                 dbc.Col(html.Div(html.H5(["Country's wine Description"]))),
                 dbc.Col(html.Div(html.H5(["Varietys of wine Description"]))),
                 ]),
-        dbc.Row(dbc.Col(dcc.Dropdown(
+        dbc.Row([dbc.Col(dcc.Dropdown(
                         id= 'country',
                         placeholder= 'Select a country',
                         options= selectcountry)),
@@ -84,7 +85,7 @@ layout = html.Div(
                         id= 'variety',
                         placeholder= 'Select a wine variety (grape)',
                         options= selectvariety)),
-                ),
+                ]),
         dbc.Row([
                 dbc.Col(html.Div(dcc.Graph(id='fig35',)),md=6,),
                 dbc.Col(html.Div(dcc.Graph(id='fig36',)),md=6,),
@@ -106,17 +107,23 @@ def generate_country(selectcountry):
     country_words= nltk.word_tokenize(country_words.lower())
     nums = re.findall("[0-9]+",description_country)
     stop_words = set(stopwords.words('english'))
-    stop_words |= set(nums) 
-    stop_words.update({'like','much', selectcountry.lower()})
+    stop_words |= set(nums) #add the list with all the numbers in the string to the list of stopwords
+    stop_words.update({'like','much','is','in', 'with',selectcountry.lower()})
     words = country_words
     sentence = [w for w in words if not w in stop_words]
-    wordcloud = WordCloud(width=400, height=400, max_words= 40,background_color='white', max_font_size=200, min_font_size=10)
-    freq = nltk.FreqDist(sentence)
-    wordcloud.generate_from_frequencies(freq)
-    plt.axis("off")
-    plt.margins(x=0, y=0)
-    fig = plt.imshow(wordcloud, interpolation="bilinear")
-    return fig
+    colors = [plotly.colors.DEFAULT_PLOTLY_COLORS[random.randrange(1, 10)] for i in range(25)]
+    weights = [random.randint(15, 35) for i in range(30)]
+    data = go.Scatter(x=[random.random() for i in range(20)],
+                 y=[random.random() for i in range(25)],
+                 mode='text',
+                 text=sentence,
+                 marker={'opacity': 0.3},
+                 textfont={'size': weights,
+                           'color': colors})
+    layout = go.Layout({'xaxis': {'showgrid': False, 'showticklabels': False, 'zeroline': False},
+                        'yaxis': {'showgrid': False, 'showticklabels': False, 'zeroline': False}})
+    fig35 = go.Figure(data=[data], layout=layout)
+    return fig35
 
 callback(
     Output('fig36','figure'),
@@ -131,14 +138,20 @@ def generate_variety(selectvariety):
     country_words= nltk.word_tokenize(country_words.lower())
     nums = re.findall("[0-9]+",description_country)
     stop_words = set(stopwords.words('english'))
-    stop_words |= set(nums) 
-    stop_words.update({'like','much', selectcountry.lower()})
+    stop_words |= set(nums) #add the list with all the numbers in the string to the list of stopwords
+    stop_words.update({'like','much','is','in', 'with',selectvariety.lower()})
     words = country_words
     sentence = [w for w in words if not w in stop_words]
-    wordcloud = WordCloud(width=400, height=400, max_words= 40,background_color='white', max_font_size=200, min_font_size=10)
-    freq = nltk.FreqDist(sentence)
-    wordcloud.generate_from_frequencies(freq)
-    plt.axis("off")
-    plt.margins(x=0, y=0)
-    fig = plt.imshow(wordcloud, interpolation="bilinear")
-    return fig
+    colors = [plotly.colors.DEFAULT_PLOTLY_COLORS[random.randrange(1, 10)] for i in range(25)]
+    weights = [random.randint(15, 35) for i in range(30)]
+    data = go.Scatter(x=[random.random() for i in range(20)],
+                 y=[random.random() for i in range(25)],
+                 mode='text',
+                 text=sentence,
+                 marker={'opacity': 0.3},
+                 textfont={'size': weights,
+                           'color': colors})
+    layout = go.Layout({'xaxis': {'showgrid': False, 'showticklabels': False, 'zeroline': False},
+                        'yaxis': {'showgrid': False, 'showticklabels': False, 'zeroline': False}})
+    fig36 = go.Figure(data=[data], layout=layout)
+    return fig36
